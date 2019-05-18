@@ -45,9 +45,9 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="start"
-            android:layout_marginStart="87dp"
+            android:layout_marginStart="70dp"
             android:layout_marginTop="90dp"
-            android:text="@string/bill"
+            android:text="0000000"
             android:textColor="@color/blue"
             android:textSize="19sp" />
 
@@ -114,14 +114,16 @@
                         android:textStyle="bold" />
 
                     <TextView
+                        android:id="@+id/slider_qty"
                         android:layout_weight="1"
                         android:gravity="center"
-                        android:text="@string/slider_qty"
+                        android:text="0"
                         android:textColor="@color/blue"
                         android:textSize="16sp"
                         android:textStyle="bold" />
 
                     <TextView
+                        android:id="@+id/slider_uc"
                         android:layout_weight="1"
                         android:gravity="center"
                         android:text="@string/slider_unit_cost"
@@ -130,9 +132,10 @@
                         android:textStyle="bold" />
 
                     <TextView
+                        android:id="@+id/slider_amount"
                         android:layout_weight="1"
                         android:gravity="center"
-                        android:text="@string/slider_amount"
+                        android:text="0"
                         android:textColor="@color/blue"
                         android:textSize="16sp"
                         android:textStyle="bold" />
@@ -151,14 +154,16 @@
                         android:textStyle="bold" />
 
                     <TextView
+                        android:id="@+id/n_slider_qty"
                         android:layout_weight="1"
                         android:gravity="center"
-                        android:text="@string/non_slider_quantity"
+                        android:text="0"
                         android:textColor="@color/blue"
                         android:textSize="16sp"
                         android:textStyle="bold" />
 
                     <TextView
+                        android:id="@+id/n_slider_uc"
                         android:layout_weight="1"
                         android:gravity="center"
                         android:text="@string/non_slider_unit_cost"
@@ -167,9 +172,10 @@
                         android:textStyle="bold" />
 
                     <TextView
+                        android:id="@+id/n_slider_amount"
                         android:layout_weight="1"
                         android:gravity="center"
-                        android:text="@string/non_slider_amount"
+                        android:text="0"
                         android:textColor="@color/blue"
                         android:textSize="16sp"
                         android:textStyle="bold" />
@@ -188,25 +194,11 @@
                         android:textStyle="bold" />
 
                     <TextView
+                        android:id="@+id/amount_total"
                         android:layout_weight="1"
-                        android:gravity="center"
-                        android:text="@string/total_quantity"
-                        android:textColor="@color/blue"
-                        android:textSize="16sp"
-                        android:textStyle="bold" />
-
-                    <TextView
-                        android:layout_weight="1"
-                        android:gravity="center"
-                        android:text="@string/total_unit_cost"
-                        android:textColor="@color/blue"
-                        android:textSize="16sp"
-                        android:textStyle="bold" />
-
-                    <TextView
-                        android:layout_weight="1"
-                        android:gravity="center"
-                        android:text="@string/total_amount"
+                        android:gravity="end"
+                        android:layout_marginEnd="33dp"
+                        android:text="0"
                         android:textColor="@color/blue"
                         android:textSize="16sp"
                         android:textStyle="bold" />
@@ -232,12 +224,12 @@
         app:layout_constraintTop_toBottomOf="@+id/cardView">
 
         <Button
-            android:id="@+id/buttonBack"
+            android:id="@+id/buttonScan"
             style="?android:attr/buttonBarButtonStyle"
             android:layout_width="165dp"
             android:layout_height="65dp"
             android:background="@color/blue"
-            android:text="@string/back"
+            android:text="@string/rescan"
             android:textColor="#fff" />
 
         <Button

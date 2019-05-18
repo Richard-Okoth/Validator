@@ -6,7 +6,7 @@
     <string name="logins">Login</string>
     <string name="username">Username</string>
     <string name="validate">Validate</string>
-    <string name="back">Back</string>
+    <string name="rescan">Scan</string>
     <string name="issue">Issue</string>
     <string name="slider_qty">1</string>
     <string name="results">RESULTS</string>

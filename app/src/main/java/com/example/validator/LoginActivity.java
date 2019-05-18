@@ -110,7 +110,7 @@ public class LoginActivity extends AppCompatActivity
 
                     if(success.equals("1"))
                     {
-                        startActivity(new Intent(getApplicationContext(),ScanCodeActivity.class));
+                        startActivity(new Intent(getApplicationContext(),VerifyActivity.class));
                         clear();
                     }
                     else
