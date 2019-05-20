@@ -2,6 +2,8 @@ package com.example.validator;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Button;
@@ -21,8 +23,10 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.lang.ref.WeakReference;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Timer;
 
 
 public class LoginActivity extends AppCompatActivity
@@ -33,6 +37,8 @@ public class LoginActivity extends AppCompatActivity
     public static final String REQUEST_TAG = "LoginActivity";
     public RequestQueue mQueue;
     private ProgressBar loading;
+    private static Handler handler;
+    private static final int HANDLER_DATA=1;
 
 
     @Override
@@ -40,6 +46,17 @@ public class LoginActivity extends AppCompatActivity
     {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.login);
+
+        handler= new Handler(){
+            @Override
+            public void handleMessage(Message msg)
+            {
+                if(msg.what==HANDLER_DATA)
+                {
+                    clear();
+                }
+            }
+        };
 
         username=findViewById(R.id.username);
         password=findViewById(R.id.password);
@@ -108,10 +125,12 @@ public class LoginActivity extends AppCompatActivity
                     String success = object.getString("success");
                     //JSONArray jsonArray = object.getJSONArray("login");
 
+
                     if(success.equals("1"))
                     {
                         startActivity(new Intent(getApplicationContext(),VerifyActivity.class));
-                        clear();
+                        handler.sendEmptyMessageDelayed(HANDLER_DATA,3000);
+                        //clear();
                     }
                     else
                     {

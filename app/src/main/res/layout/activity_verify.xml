@@ -45,7 +45,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="start"
-            android:layout_marginStart="70dp"
+            android:layout_marginStart="85dp"
             android:layout_marginTop="90dp"
             android:text="0000000"
             android:textColor="@color/blue"
@@ -239,7 +239,8 @@
             android:layout_height="match_parent"
             android:layout_marginStart="16dp"
             android:background="@color/blue"
-            android:text="@string/issue" />
+            android:text="@string/issue"
+            android:enabled="false"/>
     </LinearLayout>
 
 </android.support.constraint.ConstraintLayout>
