@@ -27,4 +27,5 @@
     <string name="total_quantity">1</string>
     <string name="total_unit_cost">1350</string>
     <string name="total_amount">1650</string>
+    <string name="error">This card has been used.</string>
 </resources>

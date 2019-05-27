@@ -40,7 +40,6 @@ public class LoginActivity extends AppCompatActivity
     private static Handler handler;
     private static final int HANDLER_DATA=1;
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
@@ -53,11 +52,11 @@ public class LoginActivity extends AppCompatActivity
             {
                 if(msg.what==HANDLER_DATA)
                 {
+                    username.requestFocus();
                     clear();
                 }
             }
         };
-
         username=findViewById(R.id.username);
         password=findViewById(R.id.password);
         loading=findViewById(R.id.loading);

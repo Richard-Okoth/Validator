@@ -5,6 +5,8 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
@@ -28,13 +30,26 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.text.DateFormat;
+import java.text.DateFormatSymbols;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.time.Instant;
+import java.time.LocalDate;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
+import java.util.Date;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
+
+import static java.util.Locale.ENGLISH;
 
 public class VerifyActivity extends AppCompatActivity
 {
     private Button scan,issue;
     public  TextView billref;
+    public TextView error;
     private String data1 =null;
     private  TextView slider_qty;
     private  TextView n_slider_qty;
@@ -46,6 +61,7 @@ public class VerifyActivity extends AppCompatActivity
     private  final int slider=1350;
     private  final int nslider=300;
     private int UPDATE_TAG=0;
+    private Handler hander;
 
     public void searchBillRef(final String text)
     {
@@ -61,20 +77,74 @@ public class VerifyActivity extends AppCompatActivity
                     String success= object.getString("success");
                     if(success.equals("1"))
                     {
-                        UPDATE_TAG=1;
-                        issue.setTextColor(Color.WHITE);
-                       issue.setEnabled(true);
-                       int res_slider= object.getInt("slider");
-                       int res_non_slider=object.getInt("nonslider");
-                       setValues(text,res_slider,res_non_slider);
-                     }
+                        Date startDate=null;
+                        Date endDate=null;
+                        LocalDate starts;
+                        LocalDate stops;
+                        LocalDate current;
+
+                        try {
+                            startDate= new SimpleDateFormat("dd-MM-yyyy").parse(object.getString("startdate"));
+                            endDate= new SimpleDateFormat("dd-MM-yyyy").parse(object.getString("enddate"));
+                        } catch (ParseException e)
+                        {
+                            e.printStackTrace();
+                        }
+
+                        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O)
+                        {
+                             starts = startDate.toInstant().atZone(ZoneId.of("Africa/Nairobi")).toLocalDate();
+                             stops=endDate.toInstant().atZone(ZoneId.of("Africa/Nairobi")).toLocalDate();
+                             current=new Date().toInstant().atZone(ZoneId.of("Africa/Nairobi")).toLocalDate();
+
+                             if(!(starts.isAfter(current)||stops.isBefore(current)))
+                             {
+                                 UPDATE_TAG=1;
+                                 issue.setTextColor(Color.WHITE);
+                                 issue.setEnabled(true);
+                                 int res_slider= object.getInt("slider");
+                                 int res_non_slider=object.getInt("nonslider");
+                                 setValues(text,res_slider,res_non_slider);
+                             }
+                             else
+                             {
+                                 if(issue.isEnabled())
+                                 {
+                                     issue.setEnabled(false);
+                                 }
+                                 error.setText("This card has expired");
+                                 error.setVisibility(View.VISIBLE);
+                                 hander.sendEmptyMessageDelayed(1,5000);
+                             }
+                        }
+                    }
+                    else if(success.equals("0"))
+                    {
+                        setValues("0000000",0,0  );
+                        MarginLayoutParams lp= (MarginLayoutParams) amount_total.getLayoutParams();
+                        lp.setMarginEnd(65);
+                        if(issue.isEnabled())
+                        {
+                            issue.setEnabled(false);
+                        }
+                        amount_total.setLayoutParams(lp);
+                        error.setText("This card has already been used");
+                        error.setVisibility(View.VISIBLE);
+                        hander.sendEmptyMessageDelayed(1,5000);
+                    }
                     else
                     {
                         setValues("0000000",0,0  );
                         MarginLayoutParams lp= (MarginLayoutParams) amount_total.getLayoutParams();
                         lp.setMarginEnd(65);
+                        if(issue.isEnabled())
+                        {
+                            issue.setEnabled(false);
+                        }
                         amount_total.setLayoutParams(lp);
-                        Toast.makeText(getApplicationContext(),"The Card has been used.",Toast.LENGTH_LONG).show();
+                        error.setText("This card does not exist");
+                        error.setVisibility(View.VISIBLE);
+                        hander.sendEmptyMessageDelayed(1,5000);
                     }
                 } catch (JSONException e)
                 {
@@ -112,7 +182,7 @@ public class VerifyActivity extends AppCompatActivity
     {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_verify);
-
+        error=findViewById(R.id.error);
         scan= findViewById(R.id.buttonScan);
         issue=findViewById(R.id.buttonIssue);
         billref=findViewById(R.id.bills);
@@ -123,6 +193,15 @@ public class VerifyActivity extends AppCompatActivity
         amount_total=findViewById(R.id.amount_total);
         issue.setTextColor(Color.GRAY);
 
+        hander= new Handler(){
+            @Override
+            public void handleMessage(Message msg) {
+                if(msg.what==1)
+                {
+                    error.setVisibility(View.GONE);
+                }
+            }
+        };
 
         scan.setOnClickListener(new View.OnClickListener()
         {
@@ -139,7 +218,6 @@ public class VerifyActivity extends AppCompatActivity
                 }
             }
         });
-
         issue.setOnClickListener(new View.OnClickListener()
         {
             @Override
@@ -163,15 +241,28 @@ public class VerifyActivity extends AppCompatActivity
                     try {
                         JSONObject object = new JSONObject(response);
                         String success = object.getString("success");
-                        if (success.equals("1")) {
-                            Toast.makeText(getApplicationContext(), "The billref was validated successfully.", Toast.LENGTH_LONG).show();
+                        if (success.equals("1"))
+                        {
+                            error.setText("Validation successful");
+                            error.setVisibility(View.VISIBLE);
+                            hander.sendEmptyMessageDelayed(1,5000);
+                           // Toast.makeText(getApplicationContext(), "The billref was validated successfully.", Toast.LENGTH_LONG).show();
                             UPDATE_TAG=0;
                             issue.setEnabled(false);
                             issue.setTextColor(Color.GRAY);
                         }
                         else
                             {
-                            Toast.makeText(getApplicationContext(), "An error was encountered during validation.", Toast.LENGTH_LONG).show();
+
+                                if(issue.isEnabled())
+                                {
+                                    issue.setEnabled(false);
+                                    issue.setTextColor(Color.GRAY);
+                                }
+                                error.setText("An error was encountered during validation");
+                                error.setVisibility(View.VISIBLE);
+                                hander.sendEmptyMessageDelayed(1,5000);
+                           // Toast.makeText(getApplicationContext(), "An error was encountered during validation.", Toast.LENGTH_LONG).show();
                         }
                     } catch (JSONException e) {
                         e.printStackTrace();
@@ -182,6 +273,11 @@ public class VerifyActivity extends AppCompatActivity
                 @Override
                 public void onErrorResponse(VolleyError error)
                 {
+                    if(issue.isEnabled())
+                    {
+                        issue.setEnabled(false);
+                        issue.setTextColor(Color.GRAY);
+                    }
                     Toast.makeText(getApplicationContext(), "An error was encountered during validation.", Toast.LENGTH_LONG).show();
                 }
             }){
@@ -252,6 +348,11 @@ public class VerifyActivity extends AppCompatActivity
         }
         else
         {
+            if(issue.isEnabled())
+            {
+                issue.setEnabled(false);
+                issue.setTextColor(Color.GRAY);
+            }
             setValues("0000000",0,0  );
             Toast.makeText(getApplicationContext(),"Nothing was captured.",Toast.LENGTH_LONG).show();
         }
