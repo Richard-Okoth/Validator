@@ -128,7 +128,7 @@ public class VerifyActivity extends AppCompatActivity
                             issue.setEnabled(false);
                         }
                         amount_total.setLayoutParams(lp);
-                        error.setText("This card has already been used");
+                        error.setText("This card has already been issued");
                         error.setVisibility(View.VISIBLE);
                         hander.sendEmptyMessageDelayed(1,5000);
                     }
@@ -360,7 +360,6 @@ public class VerifyActivity extends AppCompatActivity
 
     private void setValues(String text, int sliders, int nonslider)
     {
-
         billref.setText(text);
         slider_qty.setText(String.valueOf(sliders));
         n_slider_qty.setText(String.valueOf(nonslider));
