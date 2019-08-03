@@ -2,6 +2,7 @@ package com.example.validator;
 
 import android.Manifest;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -12,38 +13,27 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.ViewGroup.MarginLayoutParams;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
-import com.android.volley.toolbox.Volley;
 
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.text.DateFormat;
-import java.text.DateFormatSymbols;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.time.Instant;
 import java.time.LocalDate;
 import java.time.ZoneId;
-import java.time.format.DateTimeFormatter;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.Locale;
 import java.util.Map;
-
-import static java.util.Locale.ENGLISH;
 
 public class VerifyActivity extends AppCompatActivity
 {
@@ -62,6 +52,8 @@ public class VerifyActivity extends AppCompatActivity
     private  final int nslider=300;
     private int UPDATE_TAG=0;
     private Handler hander;
+    SharedPreferences sharedPreferences;
+    SharedPreferences.Editor editor;
 
     public void searchBillRef(final String text)
     {
@@ -168,10 +160,13 @@ public class VerifyActivity extends AppCompatActivity
         requestQueue.add(stringRequest);
     }
 
+
+
     @Override
     protected void onStop()
     {
         super.onStop();
+        editor.clear();
         if(requestQueue!=null)
         {
             requestQueue.cancelAll(REQUEST_TAG);
@@ -192,6 +187,9 @@ public class VerifyActivity extends AppCompatActivity
         n_slider_amount=findViewById(R.id.n_slider_amount);
         amount_total=findViewById(R.id.amount_total);
         issue.setTextColor(Color.GRAY);
+
+        sharedPreferences=getSharedPreferences("user_data",MODE_PRIVATE);
+        editor=sharedPreferences.edit();
 
         hander= new Handler(){
             @Override

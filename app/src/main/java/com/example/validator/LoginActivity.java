@@ -1,6 +1,7 @@
 package com.example.validator;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -9,7 +10,6 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ProgressBar;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.android.volley.Request;
@@ -17,16 +17,12 @@ import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
-import com.android.volley.toolbox.Volley;
 
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.lang.ref.WeakReference;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Timer;
 
 
 public class LoginActivity extends AppCompatActivity
@@ -39,12 +35,17 @@ public class LoginActivity extends AppCompatActivity
     private ProgressBar loading;
     private static Handler handler;
     private static final int HANDLER_DATA=1;
+    private SharedPreferences preferences;
+    private SharedPreferences.Editor editor;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.login);
+        preferences=getSharedPreferences("user_data",MODE_PRIVATE);
+
+
 
         handler= new Handler(){
             @Override
@@ -60,7 +61,11 @@ public class LoginActivity extends AppCompatActivity
         username=findViewById(R.id.username);
         password=findViewById(R.id.password);
         loading=findViewById(R.id.loading);
-        //String user=username.getText().toString();
+
+        if(preferences.contains("username")&&preferences.contains("password"));
+        {
+            startActivity(new Intent(this,VerifyActivity.class));
+        }
         login=findViewById(R.id.button);
         login.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -127,6 +132,11 @@ public class LoginActivity extends AppCompatActivity
 
                     if(success.equals("1"))
                     {
+                        //keep the login details in the shared preference file for session management
+                        editor=preferences.edit();
+                        editor.putString("username",username);
+                        editor.putString("password",password);
+                        editor.commit();
                         startActivity(new Intent(getApplicationContext(),VerifyActivity.class));
                         handler.sendEmptyMessageDelayed(HANDLER_DATA,3000);
                         //clear();
